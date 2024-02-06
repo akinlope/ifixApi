@@ -30,8 +30,8 @@ app.use(express.json());
 
 // enable CORS for all routes
 const corsOptions = {
-    // origin: "http://localhost:3000",
-    origin: "https://ifixapi.onrender.com",
+    origin: "http://localhost:3000",
+    // origin: "https://ifixapi.onrender.com",
     Credential: true,
     methods: "GET, POST, DELETE, PUT",
 }
