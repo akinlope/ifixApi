@@ -4,7 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
@@ -25,7 +25,7 @@ const User = require("./models/User");
 const app = express();
 app.use(cors());
 // app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.json());
 
 // enable CORS for all routes
