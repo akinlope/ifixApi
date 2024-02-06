@@ -29,14 +29,15 @@ app.use(cors());
 app.use(express.json());
 
 // enable CORS for all routes
-const corsOptions = {
-    // origin: "http://localhost:3000",
-    origin: "https://ifixapi.onrender.com",
-    // origin: "*",
-    Credential: true,
-    methods: "GET, POST, DELETE, PUT",
-}
-app.use(cors(corsOptions));
+// const corsOptions = {
+//     // origin: "http://localhost:3000",
+//     origin: "https://ifixapi.onrender.com",
+//     // origin: "*",
+//     Credential: true,
+//     methods: "GET, POST, DELETE, PUT",
+// }
+// app.use(cors(corsOptions));
+app.use(cors());
 
 // JWTSECRETE
 const secretKey = process.env.JWT_SECRET
