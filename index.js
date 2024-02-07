@@ -86,6 +86,11 @@ mongoose.connect(process.env.MONGODB_URL, {
     });
 
 
+    app.get("/", (req, res) => {
+        res.status(200).json({ message: "API is running 🚀" });
+      });
+
+
 // register
 app.post("/register", async (req, res) => {
     // console.log(req.body);
@@ -123,6 +128,7 @@ app.post("/register", async (req, res) => {
         res.status(500).json({ errorMessage: err.message })
     }
 })
+
 // login
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
