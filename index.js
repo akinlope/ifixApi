@@ -136,11 +136,7 @@ app.post("/login", async (req, res) => {
 
     try {
         // check if user exist
-        // res.status(200).json("inside try")
         const foundUser = await User.findOne({ email });
-        
-        res.status(200).json(foundUser)
-        res.status(200).json("under foundUser")
         if (!foundUser) { return res.status(401).json("Invalid email.") };
 
         // check password
