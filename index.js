@@ -132,25 +132,26 @@ app.post("/register", async (req, res) => {
 // login
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
+    res.status(200).json(req.body)
 
-    try {
-        // check if user exist
-        const foundUser = await User.findOne({ email });
-        if (!foundUser) { return res.status(401).json("Invalid email.") };
+    // try {
+    //     // check if user exist
+    //     const foundUser = await User.findOne({ email });
+    //     if (!foundUser) { return res.status(401).json("Invalid email.") };
 
-        // check password
-        const checkedPassword = await bcrypt.compare(password, foundUser.password);
-        if (!checkedPassword) { return res.status(401).json("Incorrect password.") }
+    //     // check password
+    //     const checkedPassword = await bcrypt.compare(password, foundUser.password);
+    //     if (!checkedPassword) { return res.status(401).json("Incorrect password.") }
 
-        const token = jwt.sign({ userID: foundUser._id }, secretKey, { expiresIn: "1h" });
+    //     const token = jwt.sign({ userID: foundUser._id }, secretKey, { expiresIn: "1h" });
 
-        // encrypt token
-        const encryptedToken = await bcrypt.hash(token, 10);
-        res.status(200).json({ success: true, token: encryptedToken, email: foundUser.email, username: foundUser.fullname })
-    } catch (err) {
-        console.log(err.message)
-        res.status(500).json({ errorLogin: err.message })
-    }
+    //     // encrypt token
+    //     const encryptedToken = await bcrypt.hash(token, 10);
+    //     res.status(200).json({ success: true, token: encryptedToken, email: foundUser.email, username: foundUser.fullname })
+    // } catch (err) {
+    //     console.log(err.message)
+    //     res.status(500).json({ errorLogin: err.message })
+    // }
 
 
 });
