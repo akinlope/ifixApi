@@ -296,7 +296,7 @@ app.get("/search", async (req, res) => {
             return res.status(400).json({ error: "Please Login" });
         };
 
-        const users = await User.find({ profession: { $regex: new RegExp(profession, 'i') } });
+        const users = await User.find({ profession: { $regex: new RegExp("^" + profession + "$", 'i') } });
         // console.log("users found ", users);
 
         if (!users || users.length === 0) {
