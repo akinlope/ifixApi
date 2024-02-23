@@ -30,9 +30,7 @@ app.use(express.json());
 
 // enable CORS for all routes
 const corsOptions = {
-    // origin: "http://localhost:3000",
-    origin: "https://toluifix.netlify.app",
-    // origin: "*",
+    origin: ["http://localhost:3000", "https://toluifix.netlify.app"],
     Credential: true,
     methods: "GET, POST, DELETE, PUT",
 }
@@ -133,6 +131,7 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
     // res.status(200).json(req.body)
+    // console.log(req.body)
 
     try {
         // check if user exist
