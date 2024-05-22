@@ -30,6 +30,7 @@ app.use(express.json());
 
 // enable CORS for all routes
 const corsOptions = {
+    // origin: "http://localhost:3000",
     origin: ["http://localhost:3000", "https://toluifix.netlify.app"],
     Credential: true,
     methods: "GET, POST, DELETE, PUT",
@@ -282,63 +283,102 @@ app.post("/update", upload.single("image"), async (req, res) => {
 //     }
 // });
 
+// app.get("/search", async (req, res) => {
+//     // console.log("Entered search");
+//     const { profession, email, city } = req.query;
+//     // console.log("parameters:", profession, email, city);
+
+//     try {
+
+//         // console.log("in try");
+//         if (!email) {
+//             console.log("Email is missing");
+//             return res.status(400).json({ error: "Please Login" });
+//         };
+
+//         const users = await User.find({ profession: { $regex: new RegExp("^" + profession + "$", 'i') } });
+//         console.log("users found ", users);
+
+//         if (!users || users.length === 0) {
+//             // console.log("No user found");
+//             return res.status(404).json({ error: "No user found" });
+//         }
+
+//         // const loggedInUser = await User.findOne({ email });
+//         const loggedInUserAddress = loggedInUser?.address;
+
+//         const filteredUsers = users.filter(user => {
+//             if (
+//                 loggedInUserAddress.state === user.address.state &&
+//                 loggedInUserAddress.localgvt === user.address.localgvt &&
+//                 loggedInUserAddress.city === user.address.city
+//             ) {
+//                 return true;
+//             }
+//             return false;
+//         });
+
+//         if (filteredUsers.length === 0) {
+//             const localGvtUsers = users.filter(user =>
+//                 loggedInUserAddress.state === user.address.state &&
+//                 loggedInUserAddress.localgvt === user.address.localgvt &&
+//                 loggedInUserAddress.city !== user.address.city
+//             );
+
+//             if (localGvtUsers.length > 0) {
+//                 return res.status(200).json({ message: "No user found in the city but found in the local government area", users: localGvtUsers })
+//             } else {
+//                 console.log([]);
+//                 return res.status(200).json({ message: "Profession not found within your city", user: [] })
+//             }
+//         }
+
+//         // console.log(filteredUsers);
+//         return res.status(200).json({ filteredUsers });
+//     } catch (err) {
+//         console.error("Error from here", err.message);
+//         return res.status(500).json({ error: "Internal Server Error" });
+//     }
+// });
 app.get("/search", async (req, res) => {
-    // console.log("Entered search");
-    const { profession, email } = req.query;
-    // console.log("parameters:", profession, email);
-
+console.log("Hello 1")
+    const { profession, email, city } = req.query;
+// console.log(req.query)
     try {
-
-        // console.log("in try");
         if (!email) {
             console.log("Email is missing");
             return res.status(400).json({ error: "Please Login" });
+        }
+
+        // Find the logged-in user by email to ensure they are authenticated
+        const loggedInUser = await User.findOne({ email });
+        if (!loggedInUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        console.log(loggedInUser)
+
+        // Build the query based on profession and city provided in the query parameters
+        let queryProfession = { 
+            profession: { $regex: new RegExp("^" + profession + "$", 'i') } 
         };
 
-        const users = await User.find({ profession: { $regex: new RegExp("^" + profession + "$", 'i') } });
-        // console.log("users found ", users);
+        const foundProfession = await User.find(queryProfession);
+        if (!foundProfession || foundProfession.length === 0) return res.status(404).json({error: "No profession found"})
+        console.log(foundProfession)
+            const filteredByCity = foundProfession.filter(user => {
+                return user?.address?.city && user?.address?.city.match(new RegExp("^" + city + "$", "i"))
+            })
+            if (filteredByCity.length === 0){ return res.status(404).json({error: "No user found in the specified city with the specified profession"})}
+// console.log(filteredByCity)
+        return res.status(200).json({filteredByCity})
 
-        if (!users || users.length === 0) {
-            // console.log("No user found");
-            return res.status(404).json({ error: "No user found" });
-        }
-
-        const loggedInUser = await User.findOne({ email });
-        const loggedInUserAddress = loggedInUser?.address;
-
-        const filteredUsers = users.filter(user => {
-            if (
-                loggedInUserAddress.state === user.address.state &&
-                loggedInUserAddress.localgvt === user.address.localgvt &&
-                loggedInUserAddress.city === user.address.city
-            ) {
-                return true;
-            }
-            return false;
-        });
-
-        if (filteredUsers.length === 0) {
-            const localGvtUsers = users.filter(user =>
-                loggedInUserAddress.state === user.address.state &&
-                loggedInUserAddress.localgvt === user.address.localgvt &&
-                loggedInUserAddress.city !== user.address.city
-            );
-
-            if (localGvtUsers.length > 0) {
-                return res.status(200).json({ message: "No user found in the city but found in the local government area", users: localGvtUsers })
-            } else {
-                console.log([]);
-                return res.status(200).json({ message: "Profession not found within your city", user: [] })
-            }
-        }
-
-        // console.log(filteredUsers);
-        return res.status(200).json({ filteredUsers });
+        
     } catch (err) {
         console.error("Error from here", err.message);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 // getMyProfile
 app.get("/profile", async (req, res) => {
     const { email } = req.query;
